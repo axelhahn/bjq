@@ -2,7 +2,7 @@
 
 ## Description
 
-Job queue written in bash. Execute a list of jobs sequentially.
+Job queue written in Bash. Execute a list of jobs sequentially.
 
 This is free software and Open Source 
 GNU General Public License (GNU GPL) version 3
