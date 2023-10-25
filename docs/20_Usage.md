@@ -5,18 +5,46 @@
 Use `-h` to show the help page.
 
 ```txt
+______________________________________________________________________________
      
- IML  JOBQ
+ BJQ  Axels Bash job queue
+__________________________________________________________________________v0.1
 
-Execute a list of jobs sequentially.
+  👤 Author:  Axel Hahn
+  🧾 Source:  https://github.com/axelhahn/bjq/
+  📜 License: GNU GPL 3.0
+  📗 Docs:    TODO
+
+
+Job queue written in Bash. Execute a list of jobs sequentially.
+
+
+You can add commands that will be dropped as job files into a "pending" queue.
+  bjq -a <COMMAND> [<WORKDIR>]
+
+When starting the runner (eg. as cronjob every 5 min) it executes all pending
+jobs.
+  bjq -r
+
+Running jobs are held in the "running" folder.
+
+Finished jobs are moved to the "done" folder. Their command output is in an
+extra file with extension ".ok" or ".error" depending on the exit code.
+
+
+SYNTAX:
+
+  bjq -a [<COMMAND> [<WORKDIR>]]
+  bjq [option]
 
 OPTIONS:
 
   -a | -add        add a new job command
-  -l               list current jobs
-  -r               start run to process pending jobs
-  -s               show status
+  -l | -list       list current jobs
+  -r | -run        start run to process pending jobs
+  -s | -status     show status
 
+______________________________________________________________________________
 ```
 
 ### Add a job

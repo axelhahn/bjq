@@ -4,7 +4,7 @@
 
 ```txt
 cd ~/scripts/
-git clone [URL]
+git clone https://github.com/axelhahn/bjq.git
 ```
 
 ### Files
@@ -31,7 +31,7 @@ I place a softlink there:
 
 ```txt
 > cd ~/bin/
-> ln -s /home/axel/sources/bash/jobq/bjq 
+> ln -s /home/axel/scrips/bjq/bjq 
 ```
 
 Now in every path I can type `bjq` to acccess it.

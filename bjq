@@ -27,13 +27,13 @@ JQ_DIRSELF=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 function showHelp(){
   local _self; _self=$( basename $0 )
   cat << EOF
-  👤 author:  Axel Hahn
-  🧾 license: GNU GPL 3.0
-  🌐 website: TODO
-  📘 docs:    TODO
+  👤 Author:  Axel Hahn
+  🧾 Source:  https://github.com/axelhahn/bjq/
+  📜 License: GNU GPL 3.0
+  📗 Docs:    TODO
 
 
-Job queue written in bash. Execute a list of jobs sequentially.
+Job queue written in Bash. Execute a list of jobs sequentially.
 
 
 You can add commands that will be dropped as job files into a "pending" queue.
