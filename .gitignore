@@ -1,0 +1,4 @@
+jobs/done/[0-9]*
+jobs/pending/[0-9]*
+jobs/running/[0-9]*
+log/jobq*

@@ -1,0 +1,140 @@
+#!/bin/bash
+# ======================================================================
+#
+# AXELS BASH JOB QUEUE * CLI WRAPPER
+#
+# ----------------------------------------------------------------------
+# 2023-10-NN  v0.1  ah  first lines
+# ======================================================================
+
+_version="0.1"
+
+SOURCE=${BASH_SOURCE[0]}
+while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  JQ_DIRSELF=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+  SOURCE=$(readlink "$SOURCE")
+  [[ $SOURCE != /* ]] && SOURCE=$JQ_DIRSELF/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+JQ_DIRSELF=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+
+. "$JQ_DIRSELF/jobq.class.sh" || exit
+
+
+# ----------------------------------------------------------------------
+# FUNCTIONS
+# ----------------------------------------------------------------------
+
+function showHelp(){
+  local _self; _self=$( basename $0 )
+  cat << EOF
+  👤 author:  Axel Hahn
+  🧾 license: GNU GPL 3.0
+  🌐 website: TODO
+  📘 docs:    TODO
+
+
+Job queue written in bash. Execute a list of jobs sequentially.
+
+
+You can add commands that will be dropped as job files into a "pending" queue.
+  bjq -a <COMMAND> [<WORKDIR>]
+
+When starting the runner (eg. as cronjob every 5 min) it executes all pending
+jobs.
+  bjq -r
+
+Running jobs are held in the "running" folder.
+
+Finished jobs are moved to the "done" folder. Their command output is in an
+extra file with extension ".ok" or ".error" depending on the exit code.
+
+
+SYNTAX:
+
+  $_self -a [<COMMAND> [<WORKDIR>]]
+  $_self [option]
+
+OPTIONS:
+
+  -a | -add        add a new job command
+  -l | -list       list current jobs
+  -r | -run        start run to process pending jobs
+  -s | -status     show status
+
+EOF
+echo "______________________________________________________________________________"
+
+}
+
+function _prompt(){
+  color.print "cyan" "$1 "
+  color.print "green" "> "
+  color.reset
+}
+
+# ----------------------------------------------------------------------
+# MAIN
+# ----------------------------------------------------------------------
+
+action="none"
+
+echo "______________________________________________________________________________"
+color.echo "white" "cyan" "     "
+color.print "white" "cyan" " BJQ "; echo " Axels Bash job queue"
+color.print "white" "cyan" "_____"; echo -n "_____________________________________________________________________"
+color.invert; echo "v$_version"; color.reset
+echo
+
+# ----------------------------------------------------------------------
+# detect params
+while getopts "ahlrs" OPT; do
+  if [ "$OPT" = "-" ]; then   # long option: reformulate OPT and OPTARG
+    OPT="${OPTARG%%=*}"       # extract long option name
+    OPTARG="${OPTARG#$OPT}"   # extract long option argument (may be empty)
+    OPTARG="${OPTARG#=}"      # if long option argument, remove assigning `=`
+  fi
+
+  case "$OPT" in
+    h|help)   showHelp; exit 0;;
+    a|add)    action="add"; shift 1;;
+    l|list)   action="list"; shift 1;;
+    r|run)    action="run"; shift 1;;
+    s|status) action="status"; shift 1;;
+  esac
+done
+
+# ----------------------------------------------------------------------
+# run something
+case "$action" in
+  add)
+    if [ -n "$1" ]; then
+      jobq.add "$1" "$2"
+    else
+      echo "Enter a command to execute and (optionally) a working directory."
+      _prompt "  Command         "; read -r mycommand
+      if [ -n "$mycommand" ]; then
+        _prompt "  Path (optional) "; read -r mypath
+        jobq.add "$mycommand" "$mypath"
+        exit 0
+      else
+        echo
+        echo "Abort. No command was given. Doing nothing."
+        exit 1
+      fi
+    fi
+    ;;
+  list)
+    jobq.list
+    ;;
+  none)
+    showHelp
+    ;;
+  run)
+    jobq.run
+    ;;
+  status)
+    jobq.status
+    ;;
+esac
+
+# ----------------------------------------------------------------------
