@@ -83,7 +83,7 @@ function jobq.add(){
     # detect a relative path and create a full path of it
     if pushd "$_path" 2>/dev/null; then
         _path=$( pwd )
-        popd
+        popd || exit 2
     fi
 
     (

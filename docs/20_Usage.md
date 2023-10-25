@@ -2,7 +2,7 @@
 
 ### Help
 
-Use `-h` to show the help page.
+Use `bjq -h` to show the help page.
 
 ```txt
 ______________________________________________________________________________
@@ -51,25 +51,31 @@ ______________________________________________________________________________
 
 #### Interactive
 
-`./jobq.sh -a`
+`bjq -a`
 
 You get two prompts to enter
 
 * a command to execute
 * optional: a working dir. It can be empty (just press return)
 
-#### Parameters
+#### Using parameters
 
-`./jobq.sh -a <COMMAND> [<WORKING-DIR>]`
+`bjq -a <COMMAND> [<WORKING-DIR>]`
 
 The command is a quoted string.
-The working dir is optional. If you set one it must exist.
+The working dir is optional. If nothing was given it uses the currnt path. You can set a relative path. Any given path must exist.
+
+**Remark**: Using the path extension `~` for a users HOME does not work (yet).
 
 The created job is placed as a file into the ./pending/ directory
 
 ### List jobs
 
-To see a ahort status use `./jobq.sh -s`.
+* To see a ahort status use `bjq -s`.
+* To list the pending files `bjq -l`.
 
-To list the pending files `./jobq.sh -l`.
+### Execute jobs
 
+To start processing a queue start
+
+`bjq -r`
