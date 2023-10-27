@@ -49,7 +49,7 @@ function jobq._getnextpending(){
 
 function jobq._h2(){
     color.echo "yellow" "---------- $*"
-    echo
+    # echo
 }
 
 # ----------------------------------------------------------------------
@@ -106,10 +106,15 @@ function jobq.add(){
 # ----------------------------------------------------------------------
 # get a list of current jobs
 function jobq.list(){
-    jobq._h2 "LIST"
     jobq.status
-    test $JQ_JOBS_PENDING -gt 0 && (color.echo blue  "--- PENDING:"; find "${JQ_DIRPENDING}/" -type f | grep -v "\.[a-z]*$"; echo )
-    test $JQ_JOBS_RUNNING -gt 0 && (color.echo green "--- RUNNING:"; find "${JQ_DIRRUNNING}/" -type f | grep -v "\.[a-z]*$"; echo )
+    local _iQueued; typeset -i _iQueued; _iQueued=$JQ_JOBS_PENDING+$JQ_JOBS_RUNNING
+    if [ $_iQueued -eq 0 ]; then
+        echo "Queue is empty: there is no pending or running job."
+    else
+        jobq._h2 "LIST QUEUE"
+        test $JQ_JOBS_PENDING -gt 0 && (color.echo blue  "--- PENDING:"; find "${JQ_DIRPENDING}/" -type f | grep -v "\.[a-z]*$"; echo )
+        test $JQ_JOBS_RUNNING -gt 0 && (color.echo green "--- RUNNING:"; find "${JQ_DIRRUNNING}/" -type f | grep -v "\.[a-z]*$"; echo )
+    fi
 }
 
 function jobq._readinfo(){
@@ -236,8 +241,8 @@ function jobq.run(){
 # and shows a message line
 function jobq.status(){
     jobq._log "status"
-    JQ_JOBS_RUNNING=$( find "${JQ_DIRRUNNING}/" -type f | grep -cv ".out" )
-    JQ_JOBS_PENDING=$( find "${JQ_DIRPENDING}/" -type f | wc -l )
+    JQ_JOBS_RUNNING=$( find "${JQ_DIRRUNNING}/" -type f | grep -v "\.[a-z]*$"; )
+    JQ_JOBS_PENDING=$( find "${JQ_DIRPENDING}/" -type f | grep -v "\.[a-z]*$"; )
     JQ_JOBS_OK=$(      find "${JQ_DIRDONE}/" -type f | grep -c ".ok" )
     JQ_JOBS_ERROR=$(   find "${JQ_DIRDONE}/" -type f | grep -c ".error" )
     jobq._msg "STATUS: pending : $JQ_JOBS_PENDING ... running: $JQ_JOBS_RUNNING | DONE ok: $JQ_JOBS_OK ... error: $JQ_JOBS_ERROR"
