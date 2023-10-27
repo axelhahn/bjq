@@ -241,8 +241,8 @@ function jobq.run(){
 # and shows a message line
 function jobq.status(){
     jobq._log "status"
-    JQ_JOBS_RUNNING=$( find "${JQ_DIRRUNNING}/" -type f | grep -v "\.[a-z]*$"; )
-    JQ_JOBS_PENDING=$( find "${JQ_DIRPENDING}/" -type f | grep -v "\.[a-z]*$"; )
+    JQ_JOBS_RUNNING=$( find "${JQ_DIRRUNNING}/" -type f | grep -vc "\.[a-z]*$"; )
+    JQ_JOBS_PENDING=$( find "${JQ_DIRPENDING}/" -type f | grep -vc "\.[a-z]*$"; )
     JQ_JOBS_OK=$(      find "${JQ_DIRDONE}/" -type f | grep -c ".ok" )
     JQ_JOBS_ERROR=$(   find "${JQ_DIRDONE}/" -type f | grep -c ".error" )
     jobq._msg "STATUS: pending : $JQ_JOBS_PENDING ... running: $JQ_JOBS_RUNNING | DONE ok: $JQ_JOBS_OK ... error: $JQ_JOBS_ERROR"
