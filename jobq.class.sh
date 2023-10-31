@@ -47,9 +47,25 @@ function jobq._getnextpending(){
     find "${JQ_DIRPENDING}/" -type f | grep -v "\.[a-z]*$" | sort | head -1
 }
 
+# ----------------------------------------------------------------------
+# write a header 2 line
+# param  string  haeder text
 function jobq._h2(){
     color.echo "yellow" "---------- $*"
     # echo
+}
+
+# ----------------------------------------------------------------------
+# list files and their commands in a given dir
+# param  string  queue dir to show
+function jobq._listfiles(){
+    local _jobdir="$1"
+    find "${_jobdir}/" -type f | grep -v "\.[a-z]*$" | while read _jobfile
+    do
+        echo "   🗒️ $_jobfile"
+            echo "      💻 $( jobq._readinfo $_jobfile 'command' )"
+            echo
+    done
 }
 
 # ----------------------------------------------------------------------
@@ -64,6 +80,16 @@ function jobq._log(){
 # param  string  message to show
 function jobq._msg(){
     color.echo "cyan" ">>>>> $( date +"%Y-%m-%d %H:%M:%S" ) | $*"
+}
+
+# ----------------------------------------------------------------------
+# return info item from a jobfile
+# param  string  full path of the job file to read
+# param  string  item to fetc; one of date|user|command|path
+function jobq._readinfo(){
+    local _jobfile="$1"
+    local _item="$2"
+    grep "$_item.*:" "$_jobfile" | cut -f2- -d ':' | sed 's,^ ,,'
 }
 
 
@@ -112,15 +138,10 @@ function jobq.list(){
         echo "Queue is empty: there is no pending or running job."
     else
         jobq._h2 "LIST QUEUE"
-        test $JQ_JOBS_PENDING -gt 0 && (color.echo blue  "--- PENDING:"; find "${JQ_DIRPENDING}/" -type f | grep -v "\.[a-z]*$"; echo )
-        test $JQ_JOBS_RUNNING -gt 0 && (color.echo green "--- RUNNING:"; find "${JQ_DIRRUNNING}/" -type f | grep -v "\.[a-z]*$"; echo )
+        test $JQ_JOBS_PENDING -gt 0 && (color.fg blue  ; echo "⏳ PENDING:"; jobq._listfiles "${JQ_DIRPENDING}/"; echo )
+        test $JQ_JOBS_RUNNING -gt 0 && (color.fg green ; echo "🟢 RUNNING:"; jobq._listfiles "${JQ_DIRRUNNING}/"; echo )
+        color.reset
     fi
-}
-
-function jobq._readinfo(){
-    local _jobfile="$1"
-    local _item="$2"
-    grep "$_item.*:" $_jobfile | cut -f2- -d ':' | sed 's,^ ,,'
 }
 
 # ----------------------------------------------------------------------
