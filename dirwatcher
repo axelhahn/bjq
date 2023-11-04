@@ -1,13 +1,13 @@
 #!/bin/bash
 # ======================================================================
 #
-# AXELS BASH JOB QUEUE * CLI WRAPPER
+# AXELS DIR WATCHER
 #
 # ----------------------------------------------------------------------
-# 2023-10-NN  v0.1  ah  first lines
+# 2023-11-NN  v0.1  ah  first lines
 # ======================================================================
 
-_version="0.1"
+_version=0.1
 
 SOURCE=${BASH_SOURCE[0]}
 while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -17,8 +17,7 @@ while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 JQ_DIRSELF=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
-. "$JQ_DIRSELF/include/jobq.class.sh" || exit
-
+. "$JQ_DIRSELF/include/dirwatch.class.sh" || exit
 
 # ----------------------------------------------------------------------
 # FUNCTIONS
@@ -28,7 +27,7 @@ function showHelp(){
   local _self; _self=$( basename $0 )
   echo "______________________________________________________________________________"
   color.echo "white" "cyan" "     "
-  color.print "white" "cyan" " BJQ "; echo " Axels Bash job queue"
+  color.print "white" "cyan" " DIR "; echo "  W A T C H E R"
   color.print "white" "cyan" "_____"; echo -n "_____________________________________________________________________"
   color.invert; echo "v$_version"; color.reset
   echo
@@ -40,54 +39,45 @@ function showHelp(){
   📗 Docs:    TODO
 ______________________________________________________________________________
 
-
-Job queue written in Bash. Execute a list of jobs sequentially.
-
-
-You can add commands that will be dropped as job files into a "pending" queue.
-  bjq -a <COMMAND> [<WORKDIR>]
-
-When starting the runner (eg. as cronjob every 5 min) it executes all pending
-jobs.
-  bjq -r
-
-Running jobs are held in the "running" folder.
-
-Finished jobs are moved to the "done" folder. Their command output is in an
-extra file with extension ".ok" or ".error" depending on the exit code.
+Watch a directory and wait for new files.
+Plugins can define by a filefilter what to execute for a matching file.
+The command will be added with bjp.
 ______________________________________________________________________________
 
 SYNTAX:
 
-  $_self -a [<COMMAND> [<WORKDIR>]]
+  $_self -w [DIR]
   $_self [option]
 
 OPTIONS:
 
-  -a | --add  [<COMMAND> [<WORKDIR>]]
-                    Add a new job command and optional a working directory.
-                    Default directory is the current directory.
-                    If no command is given the interactive mode will start.
-  -h | --help       Show this help and exit.
-  -l | --list       List current jobs.
-  -r | --run        Start run to process pending jobs.
-  -s | --status     Show status.
-  -v | --version    Show version and exit.
+  -h | --help         Show this help and exit
+  -d | --dir   [DIR]  set a directory to watch or to list
+  -l | --list         list current files
+  -w | --watch [DIR]  start run to process pending jobs
+  -v | --version      Show version and exit
+
+EXAMPLES:
+
+  $_self -l       List files to process below default dir
+                      $DW_DIRBASE
+  $_self -d /my/path/ -l
+                      List files to process below /my/path/
+
+  $_self -w       Start watching incoming files below default dir
+                      $DW_DIR2WATCH
+  $_self -d /my/path/ -l
+                      Start watching incoming files below /my/path/incoming
 ______________________________________________________________________________
 EOF
 
-}
-
-function _prompt(){
-  color.print "cyan" "$1 "
-  color.print "green" "> "
-  color.reset
 }
 
 # ----------------------------------------------------------------------
 # MAIN
 # ----------------------------------------------------------------------
 
+dw.setdir
 
 if [ "$#" -eq 0 ]; then
   echo "ERROR: Parameter required"
@@ -96,33 +86,15 @@ if [ "$#" -eq 0 ]; then
 fi
 
 while [[ "$#" -gt 0 ]]; do case $1 in
-  -h|--help)   showHelp; exit 0;;
-  -a|--add)  if [ -n "$2" ]; then
-            if [ -d "$3" ]; then
-              jobq.add "$2" "$3"
-              shift
-            else
-              jobq.add "$2"
-            fi
-            shift; shift
-          else
-            echo "Enter a command to execute and (optionally) a working directory."
-            _prompt "  Command         "; read -r mycommand
-            if [ -n "$mycommand" ]; then
-              _prompt "  Path (optional) "; read -r mypath
-              jobq.add "$mycommand" "$mypath"
-            else
-              echo
-              echo "Abort. No command was given. Doing nothing."
-              exit 1
-            fi
-          fi
-          ;;
-  -l|--list) jobq.list; shift;;
-  -r|--run)  jobq.run; shift ;;
-  -s|--status) jobq.status; shift ;;
+  -h|--help) showHelp;exit 0;;
+  -d|--dir)  dw.setdir "$2"; shift; shift ;;
+  -l|--list) dw.list; shift;;
+  -p|--plugins) dw.plugins; shift;;
+  -w|--watch) dw.watch "$2"; shift;;
   -v|--version) echo "$(basename $0) $_version"; exit 0;;
   *) color.echo red "ERROR: Unknown parameter: $1"; showHelp; exit 1;
 esac; done
+
+exit 0
 
 # ----------------------------------------------------------------------

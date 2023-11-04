@@ -8,7 +8,7 @@
 # ======================================================================
 
 # JQ_DIRSELF was set in "bjq"
-. "$JQ_DIRSELF/vendor/color.class.sh"
+. "$JQ_DIRSELF/vendor/color.class.sh" || exit
 
 # ----------------------------------------------------------------------
 # VARS
@@ -72,7 +72,7 @@ function jobq._listfiles(){
 # add a line into the log; the timetamp will be added automatically
 # param  string  line to log
 function jobq._log(){
-    echo "$( date +"%Y-%m-%d %H:%M:%S" ) $*" >> "$JQ_LOGFILE"
+    echo "$( date +"%Y-%m-%d %H:%M:%S" ) | $*" >> "$JQ_LOGFILE"
 }
 
 # ----------------------------------------------------------------------

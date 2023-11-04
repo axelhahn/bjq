@@ -1,0 +1,9 @@
+{
+    "label": "md to html",
+    "description": "convert markdown to html",
+
+    "filter": ".md",
+
+    "command": "markdown-to-html --in %INFILE% --out %OUTFILE%.html"
+
+}

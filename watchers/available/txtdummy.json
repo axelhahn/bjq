@@ -1,0 +1,9 @@
+{
+    "label": "txt dummy plugin",
+    "description": "just detecting txt",
+
+    "filter": ".txt",
+
+    "command": "cat %INFILE%"
+
+}
