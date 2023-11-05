@@ -36,7 +36,7 @@ function showHelp(){
   👤 Author:  Axel Hahn
   🧾 Source:  https://github.com/axelhahn/bjq/
   📜 License: GNU GPL 3.0
-  📗 Docs:    TODO
+  📗 Docs:    https://www.axel-hahn.de/docs/bjq/
 ______________________________________________________________________________
 
 Watch a directory and wait for new files.
