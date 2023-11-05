@@ -48,35 +48,40 @@ EXAMPLES:
 ______________________________________________________________________________
 ```
 
-### Add a job
+### Watch a directory
 
-#### Interactive
+You can start watching a directory for new files by
+```txt
+dirwatcher -w [DIR]
+```
 
-`bjq -a`
+Without a directory it watches the subdir files/incoming/.
 
-You get two prompts to enter
+### Plugins
 
-* a command to execute
-* optional: a working dir. It can be empty (just press return)
+How to define what to do with an incoming file?
 
-#### Using parameters
+Have a look to the subdir "watchers".
 
-`bjq -a <COMMAND> [<WORKING-DIR>]`
+* available - files here are inactive
+* enabled - activated plugins
 
-The command is a quoted string.
-The working dir is optional. If nothing was given it uses the currnt path. You can set a relative path. Any given path must exist.
+To activate a plugin put a file into "enabled" folder or create a softlink to an available file.
 
-**Remark**: Using the path extension `~` for a users HOME does not work (yet).
+#### Plugin file (WIP)
 
-The created job is placed as a file into the ./pending/ directory
+A plugin file is a json file. The keys "filter" and "command" are mandantory.
 
-### List jobs
+Use the strings %INFILE% and %OUTFILE% will be replaced by dirwatcher when generating the command.
 
-* To see a ahort status use `bjq -s`.
-* To list the pending files `bjq -l`.
+```json
+{
+    "label": "md to html",
+    "description": "convert markdown to html",
 
-### Execute jobs
+    "filter": ".md",
 
-To start processing a queue start
+    "command": "markdown-to-html --in %INFILE% --out %OUTFILE%.html"
 
-`bjq -r`
+}
+```
