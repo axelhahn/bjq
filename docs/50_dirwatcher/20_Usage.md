@@ -52,7 +52,7 @@ ______________________________________________________________________________
 
 You can start watching a directory for new files by
 ```txt
-dirwatcher -w [DIR]
+$ ./dirwatcher -w [DIR]
 ```
 
 Without a directory it watches the subdir files/incoming/.
@@ -67,6 +67,13 @@ Have a look to the subdir "watchers".
 * enabled - activated plugins
 
 To activate a plugin put a file into "enabled" folder or create a softlink to an available file.
+
+#### List activated plugins
+
+```txt
+$ ./dirwatcher -p
+/home/axel/sources/bash/jobq)/watchers/enabled/md2html.json
+```
 
 #### Plugin file (WIP)
 

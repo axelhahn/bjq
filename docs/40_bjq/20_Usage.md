@@ -76,8 +76,24 @@ The created job is placed as a file into the ./pending/ directory
 
 ### List jobs
 
-* To see a short status as single line use `bjq -s`.
-* To list the pending files `bjq -l`.
+To see a short status as single line use `bjq -s`.
+
+```txt
+$ bjq -s
+>>>>> 2023-11-05 22:16:16 | STATUS: pending : 1 ... running: 0 | DONE ok: 12 ... error: 2
+```
+
+To list the pending and running files files `bjq -l`. Yo see the command line of all pending/ processed jobs.
+
+```txt
+$ bjq -l
+>>>>> 2023-11-05 22:17:16 | STATUS: pending : 1 ... running: 0 | DONE ok: 12 ... error: 2
+---------- LIST QUEUE 
+⏳ PENDING:
+   🗒 (...)/jobs/pending//2023-11-04__225335__046583176
+      💻 markdown-to-html --in '/home/axel/sources/bash/jobq/files/incoming/running/hello.md' --out '/home/axel/sources/bash/jobq/files/output/hello.md'.html; rc=$?; mv '/home/axel/sources/bash/jobq/files/incoming/running/hello.md' '/home/axel/sources/bash/jobq/files/incoming/done/hello.md'; exit $rc 
+```
+
 
 ### Execute jobs
 
