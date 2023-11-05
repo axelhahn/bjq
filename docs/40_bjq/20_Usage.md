@@ -14,6 +14,7 @@ __________________________________________________________________________v0.1
   🧾 Source:  https://github.com/axelhahn/bjq/
   📜 License: GNU GPL 3.0
   📗 Docs:    TODO
+______________________________________________________________________________
 
 
 Job queue written in Bash. Execute a list of jobs sequentially.
@@ -30,7 +31,7 @@ Running jobs are held in the "running" folder.
 
 Finished jobs are moved to the "done" folder. Their command output is in an
 extra file with extension ".ok" or ".error" depending on the exit code.
-
+______________________________________________________________________________
 
 SYNTAX:
 
@@ -39,11 +40,15 @@ SYNTAX:
 
 OPTIONS:
 
-  -a | -add        add a new job command
-  -l | -list       list current jobs
-  -r | -run        start run to process pending jobs
-  -s | -status     show status
-
+  -a | --add  [<COMMAND> [<WORKDIR>]]
+                    Add a new job command and optional a working directory.
+                    Default directory is the current directory.
+                    If no command is given the interactive mode will start.
+  -h | --help       Show this help and exit.
+  -l | --list       List current jobs.
+  -r | --run        Start run to process pending jobs.
+  -s | --status     Show status.
+  -v | --version    Show version and exit.
 ______________________________________________________________________________
 ```
 
@@ -71,7 +76,7 @@ The created job is placed as a file into the ./pending/ directory
 
 ### List jobs
 
-* To see a ahort status use `bjq -s`.
+* To see a short status as single line use `bjq -s`.
 * To list the pending files `bjq -l`.
 
 ### Execute jobs
