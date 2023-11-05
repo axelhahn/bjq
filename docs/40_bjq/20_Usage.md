@@ -13,7 +13,7 @@ __________________________________________________________________________v0.1
   👤 Author:  Axel Hahn
   🧾 Source:  https://github.com/axelhahn/bjq/
   📜 License: GNU GPL 3.0
-  📗 Docs:    TODO
+  📗 Docs:    https://www.axel-hahn.de/docs/bjq/
 ______________________________________________________________________________
 
 
