@@ -89,7 +89,10 @@ function dw.getPlugin(){
 
 # get a list of plugin configuration files
 function dw.plugins(){
-  find "$DW_DIRPLUGINS" -type f -o -type l -name "*json"
+  (
+    find "$DW_DIRPLUGINS" -type f -name "*.json"
+    find "$DW_DIRPLUGINS" -type l -name "*.json"
+  ) | sort
 }
 
 
