@@ -17,6 +17,8 @@ If a job is finished it will watch for another job that could be added into the 
 
 ## Behind the scenes
 
+![Process](../images/overview_process_bjq.drawio.png)
+
 The queue is handles with files.
 
 ```txt
