@@ -8,9 +8,6 @@
 </div>
 </html>
 
-This is free software and Open Source 
-GNU General Public License (GNU GPL) version 3
-
 👤 Author: Axel Hahn\
 🧾 Source: <https://github.com/axelhahn/bjq/>\
 📜 License: GNU GPL 3.0\
