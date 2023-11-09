@@ -54,6 +54,7 @@ OPTIONS:
   -h | --help         Show this help and exit
   -d | --dir   [DIR]  set a directory to watch or to list
   -l | --list         list current files
+  -p | --plugins      list currently activated plugins
   -w | --watch [DIR]  start run to process pending jobs
   -v | --version      Show version and exit
 
