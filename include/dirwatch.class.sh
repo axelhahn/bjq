@@ -79,7 +79,7 @@ function dw.getPlugin(){
   local _infile="$1"
   dw.plugins | while read -r _plugin; do
     _filter=$( jq  ".filter" "$_plugin" | tr -d '"')
-    if echo "$_infile" | grep "$_filter" >/dev/null; then
+    if echo "$_infile" | grep -E "$_filter" >/dev/null; then
       echo "$_plugin"
       return 0
     fi
@@ -98,20 +98,55 @@ function dw.plugins(){
 
 function dw.processfile(){
   local filename="$1"
-  workfile="${DW_DIRWORK}/$filename"
-  donefile="${DW_DIRDONE}/$filename"
-  outfile="${DW_DIROUT}/$filename"
+  local _workfile="${DW_DIRWORK}/$filename"
+  local _donefile="${DW_DIRDONE}/$filename"
+  local _outfile="${DW_DIROUT}/$filename"
+  local _command
+  local _type
+  local _typeval
 
-  foundplugin=$( dw.getPlugin "$directory/$filename" )
+  foundplugin=$( dw.getPlugin "$filename" )
   if [ -n "$foundplugin" ]; then
     dw._log "   > plugin: $foundplugin"
-    _command=$( jq  ".command" "$foundplugin" | tr -d '"')
-    mv "$directory/$filename" "$workfile"
+    _command=$( jq  ".command"       "$foundplugin" | tr -d '"')
+    _typeval=$( jq  ".type"          "$foundplugin" | tr -d '"')
+    _addpre=$(  jq  ".oufile_prefix" "$foundplugin" | tr -d '"')
+    _addsuf=$(  jq  ".oufile_suffix" "$foundplugin" | tr -d '"')
 
-    # bjq_command=$( echo "bjq -a $_command; mv \'$workfile\' \'$donefile\' | sed "s,%INFILE%,$workfile,g" | sed "s,%OUTFILE%,$outfile,g" )
-    bjq_command=$( echo "bjq -a \"$_command; rc=\\\$?; mv '$workfile' '$donefile'; exit \\\$rc \"" | sed "s,%INFILE%,'$workfile',g" | sed "s,%OUTFILE%,'$outfile',g" )
-    dw._log "   > $bjq_command"
-    eval $bjq_command >/dev/null
+    _outfile="${DW_DIROUT}/${_addpre}${filename}${_addsuf}"
+
+    mv "$directory/$filename" "$_workfile"
+    dw._log "   > command: $_command"
+
+    case "$_typeval" in
+      bjq|bg|now) _type=$_typeval;;
+      *)         _type="bjq";;
+    esac
+    dw._log "   > type: $_type"
+
+
+    # replace INFILE and OUTFILE
+    _command="$( echo $_command | sed "s,%INFILE%,'$_workfile',g" | sed "s,%OUTFILE%,'$_outfile',g" )"
+
+    # add actions around
+    _command="
+      $_command; 
+      rc=\\\$?;
+      mv '$_workfile' '$_donefile';
+      exit \\\$rc
+    "
+
+    case "$_type" in
+      bjq)
+        _command="bjq -a \"$_command\""
+        ;;
+      bg)
+        _command="nohup $_command & "
+        ;;
+    esac
+
+    # no quotes -> transformed into single line
+    eval "$_command"
   else
     dw._log "   SKIP: no plugin was found"
   fi

@@ -3,7 +3,9 @@
     "description": "convert markdown to html",
 
     "filter": ".md",
+    "oufile_prefix": "generated__",
+    "oufile_suffix": ".html",
 
-    "command": "markdown-to-html --in %INFILE% --out %OUTFILE%.html"
-
+    "command": "markdown-to-html --in %INFILE% --out %OUTFILE%",
+    "type": "bjq"
 }
