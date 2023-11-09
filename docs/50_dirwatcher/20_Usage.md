@@ -72,7 +72,7 @@ To activate a plugin put a file into "enabled" folder or create a softlink to an
 
 ```txt
 $ ./dirwatcher -p
-/home/axel/sources/bash/jobq)/watchers/enabled/md2html.json
+/home/axel/sources/bash/jobq/watchers/enabled/md2html.json
 ```
 
 #### Plugin file (WIP)
@@ -86,9 +86,21 @@ Use the strings %INFILE% and %OUTFILE% will be replaced by dirwatcher when gener
     "label": "md to html",
     "description": "convert markdown to html",
 
-    "filter": ".md",
+    "filter": "\.md$",
+    "oufile_prefix": "generated__",
+    "oufile_suffix": ".html",
 
-    "command": "markdown-to-html --in %INFILE% --out %OUTFILE%.html"
-
+    "command": "markdown-to-html --in %INFILE% --out %OUTFILE%",
+    "type": "bjq"
 }
 ```
+
+| Key           | Type   | Description |
+| ---           | ---    | --- |
+| label         | string | A label |
+| decription    | string | A short description |
+| filter        | string | Regex to to match filename (without path), eg. `\.jpg$`. The filter is casesensitive. To apply multiple expressions use `()` and a pipe, eg. `\.(gif\|jpg\|png)$` |
+| oufile_prefix | string | optional: Prefix for generated output file |
+| oufile_suffix | string | optional: Prefix for generated output file |
+| command       | string | command to execute |
+| type          | string | Type of execution; one of (bjq\|bg); default: "bjq" |
