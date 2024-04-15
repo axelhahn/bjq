@@ -6,9 +6,9 @@ Use `bjq -h` to show the help page.
 
 ```txt
 ______________________________________________________________________________
-     
+
  BJQ  Axels Bash job queue
-__________________________________________________________________________v0.1
+__________________________________________________________________________v0.2
 
   👤 Author:  Axel Hahn
   🧾 Source:  https://github.com/axelhahn/bjq/
@@ -45,6 +45,7 @@ OPTIONS:
                     Default directory is the current directory.
                     If no command is given the interactive mode will start.
   -h | --help       Show this help and exit.
+  -d | --done       List finished jobs with exit status
   -l | --list       List current jobs.
   -r | --run        Start run to process pending jobs.
   -s | --status     Show status.
@@ -74,7 +75,7 @@ The working dir is optional. If nothing was given it uses the currnt path. You c
 
 The created job is placed as a file into the ./pending/ directory
 
-### List jobs
+### List todo jobs
 
 To see a short status as single line use `bjq -s`.
 
@@ -94,9 +95,20 @@ $ bjq -l
       💻 markdown-to-html --in '/home/axel/sources/bash/jobq/files/incoming/running/hello.md' --out '/home/axel/sources/bash/jobq/files/output/hello.md'.html; rc=$?; mv '/home/axel/sources/bash/jobq/files/incoming/running/hello.md' '/home/axel/sources/bash/jobq/files/incoming/done/hello.md'; exit $rc 
 ```
 
-
 ### Execute jobs
 
 To start processing a queue start
 
 `bjq -r`
+
+### List finished jobs
+
+To list finished jobs use `bjq -d`.
+
+You get a list of job files and when they were finished with its exit status. Successful jobs (rc=0) are green; failed jobs (rc > 0) are marked in red.
+
+### Cleanup finished jobs
+
+Last but not least you need to remove the files (except .keep) in the `./jobs/done/` folder. To do so you can run this command in a cronjob:
+
+`find [appdir]/jobs/done/ -type f -name "20*" -mtime +7 -print -delete`
