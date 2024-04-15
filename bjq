@@ -5,9 +5,10 @@
 #
 # ----------------------------------------------------------------------
 # 2023-10-NN  v0.1  ah  first lines
+# 2024-04-15  v0.2  ah  show finished jobs
 # ======================================================================
 
-_version="0.1"
+_version="0.2"
 
 SOURCE=${BASH_SOURCE[0]}
 while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -69,6 +70,7 @@ OPTIONS:
                     Default directory is the current directory.
                     If no command is given the interactive mode will start.
   -h | --help       Show this help and exit.
+  -d | --done       List finished jobs with exit status
   -l | --list       List current jobs.
   -r | --run        Start run to process pending jobs.
   -s | --status     Show status.
@@ -118,6 +120,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
             fi
           fi
           ;;
+  -d|--done) jobq.donelist; shift;;
   -l|--list) jobq.list; shift;;
   -r|--run)  jobq.run; shift ;;
   -s|--status) jobq.status; shift ;;

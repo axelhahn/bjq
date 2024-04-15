@@ -5,6 +5,7 @@
 #
 # ----------------------------------------------------------------------
 # 2023-10-NN  v0.1  ah  first lines
+# 2024-04-15  v0.2  ah  fix error code in log; show finished jobs
 # ======================================================================
 
 # JQ_DIRSELF was set in "bjq"
@@ -62,9 +63,11 @@ function jobq._listfiles(){
     local _jobdir="$1"
     find "${_jobdir}/" -type f | grep -v "\.[a-z]*$" | while read _jobfile
     do
+        test -f "${_jobfile}.ok"    && color.echo green "   OK: $( tail -1 "${_jobfile}.ok" ) "
+        test -f "${_jobfile}.error" && color.echo red   "   ERROR: $( tail -1 "${_jobfile}.error" )"
         echo "   🗒️ $_jobfile"
-            echo "      💻 $( jobq._readinfo $_jobfile 'command' )"
-            echo
+        echo "      💻 $( jobq._readinfo $_jobfile 'command' )"
+        echo
     done
 }
 
@@ -143,6 +146,13 @@ function jobq.list(){
         color.reset
     fi
 }
+# ----------------------------------------------------------------------
+# get a list of finished jobs
+function jobq.donelist(){
+    jobq.status
+    jobq._h2 "LIST DONE"
+    jobq._listfiles "${JQ_DIRDONE}/"; echo
+}
 
 # ----------------------------------------------------------------------
 # process a job file
@@ -214,7 +224,7 @@ function jobq.process(){
                 jobq._log "process - $_jobid - OK"
             else
                 local _rc=$?
-                echo "$( date ) END - rc=$?" >> "$_runjob.out"
+                echo "$( date ) END - rc=$_rc" >> "$_runjob.out"
                 color.echo "red" "ERROR"
                 mv -f "$_runjob.out" "$JQ_DIRDONE/${_jobid}.error"
                 jobq._log "process - $_jobid - FAILED"
